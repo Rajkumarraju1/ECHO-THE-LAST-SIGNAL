@@ -1,0 +1,9 @@
+node_modules/
+.npm-cache/
+coverage/
+dist/
+.env
+.env.*
+work/
+outputs/
+.freebuff/
