@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import type { ClientView, EvidenceView, Role, EchoChoice } from "./types";
+import { StationViewport } from "./station/StationViewport";
 import "./styles.css";
 
 const ROLES: Array<{ id: Role; label: string; purpose: string }> = [
@@ -332,7 +333,7 @@ function App() {
       <div className="panel"><h2>Crew seats</h2><p>Each specialist receives private information once the station launches.</p><div className="roles">{ROLES.map((role) => <button key={role.id} disabled={Boolean(assignedRoles.has(role.id)) && me?.role !== role.id} className={me?.role === role.id ? "role selected" : "role"} onClick={() => send({ type: "role.select", role: role.id })}><strong>{role.label}</strong><span>{role.purpose}</span>{assignedRoles.has(role.id) && <em>Assigned</em>}</button>)}</div></div>
       <aside className="panel crew"><h2>Crew roster</h2>{view.public.players.map((player) => <p key={player.id}><strong>{player.callsign}</strong><span>{player.role ?? "Choosing a seat"}</span></p>)}<button disabled={!canLaunch} onClick={() => send({ type: "match.launch" })}>Launch station</button><p className="notice">{canLaunch ? "Roster is ready. Launch locks roles." : "At least two crew members must each choose a distinct role."}</p></aside>
     </section> : <section className="station-layout">
-      <div className="station panel"><div className="room-grid">{ROOMS.map((room) => <button key={room} className={`room ${me?.position.roomId === room ? "current" : ""}`} onClick={() => send({ type: "move", roomId: room, x: 50, y: 50 })} disabled={Boolean(me?.incapacitated)}><span>{room}</span>{view.public.players.filter((player) => player.position.roomId === room).map((player) => <small key={player.id} className={player.incapacitated ? "down" : undefined}>{player.incapacitated ? `${player.callsign} ⚠` : player.callsign}</small>)}</button>)}</div><p className="notice">Click an adjoining room to walk there. The server rejects impossible transitions.</p></div>
+      <div className="station panel"><StationViewport view={view} playerId={playerId} onMove={(roomId) => send({ type: "move", roomId, x: 50, y: 50 })} /><p className="notice">Click an adjoining room to walk there. The server rejects impossible transitions.</p></div>
       <aside className="side-stack">
         <section className="panel">
           <h2>Your private briefing</h2>

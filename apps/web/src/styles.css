@@ -34,12 +34,33 @@ header { display: flex; justify-content: space-between; gap: 1rem; align-items: 
 
 /* Movement: the station is the largest surface and anchors the hierarchy. */
 .station { min-height: 65vh; display: grid; place-items: center; border-color: #3b6570; }
-.room-grid { display: grid; width: min(100%, 52rem); grid-template-columns: repeat(3, 1fr); gap: .75rem; }
-.room { min-height: 8rem; background: #132a34; border-color: #3b6570; text-transform: capitalize; display: flex; flex-direction: column; gap: .45rem; align-items: center; justify-content: center; }
-.room.current { border: 2px solid #74f2df; background: #1b4147; }
-.room:nth-child(1) { grid-column: 2; }
-.room:nth-child(5) { grid-column: 2; }
-.room small { color: #a9c5cf; }
+.station-canvas-host { width: 100%; aspect-ratio: 640 / 660; }
+.station-canvas-host canvas { width: 100%; display: block; border-radius: .5rem; }
+
+/* Spatial CSS fallback: same shared geometry, simplified rendering. */
+.station-fallback { width: 100%; position: relative; }
+.station-fallback-world { position: relative; width: 100%; height: 100%; }
+.fb-room { position: absolute; background: #10242d; border: 1px solid #3b6570; border-radius: 6px; text-transform: capitalize; text-align: left; }
+.fb-room::after { content: ""; position: absolute; left: 0; right: 0; bottom: -14px; height: 14px; background: #0a161d; border-radius: 0 0 6px 6px; }
+.fb-current { border: 2px solid #74f2df; background: #17414a; }
+.fb-adjoining { border-color: #6ae8df; }
+.fb-label { font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: #d6e8ef; display: block; padding: .45rem .6rem 0; opacity: .85; }
+.fb-crew { position: absolute; font-size: .68rem; font-weight: 600; color: #c7d8e2; transform: translate(-50%, -100%); text-shadow: 0 1px 2px #000; white-space: nowrap; transition: left .6s ease, top .6s ease; }
+@media (prefers-reduced-motion: reduce) { .fb-crew { transition: none; } }
+.fb-down { color: #ef7d7d; }
+.fb-faded { opacity: .55; }
+.fb-door { position: absolute; background: #10242d; outline: 2px solid rgba(106, 232, 223, .45); }
+
+/* Spatial crisis & Echo states (fallback) — mirror the Pixi scene treatment. */
+.fb-alert-critical { background: #1d2a26; box-shadow: inset 0 0 0 2px rgba(234, 181, 110, .4); }
+.fb-alert-failure { background: #2a1a1a; box-shadow: inset 0 0 0 2px rgba(239, 125, 125, .55); }
+.station-fallback.fb-band::after { content: "〰 band loud — resonance from Communications"; position: absolute; top: 8px; right: 10px; font-size: .68rem; color: var(--echo); }
+.station-fallback.fb-seam::before { content: ""; position: absolute; left: 4%; right: 4%; top: 35%; height: 26px; border-top: 2px dashed rgba(239, 125, 125, .45); border-bottom: 2px dashed rgba(239, 125, 125, .45); background: rgba(239, 125, 125, .06); }
+.station-fallback.fb-echo::after { content: "◈ alternate outcome surfacing"; position: absolute; bottom: 8px; right: 10px; font-size: .68rem; color: var(--echo); }
+@media (prefers-reduced-motion: reduce) { .station-fallback.fb-band::after, .station-fallback.fb-echo::after { animation: none; } }
+.fb-prop { position: absolute; opacity: .8; border-radius: 4px; }
+.fb-prop-pod, .fb-prop-coil { border-radius: 10px; }
+.fb-prop-holo { border-radius: 50%; }
 
 .side-stack { display: grid; align-content: start; gap: 1rem; }
 article { border-left: 2px solid var(--band); padding: .4rem .6rem; margin: .6rem 0; background: #0b1821; }
@@ -158,6 +179,5 @@ button.danger { border-color: var(--bad); color: #ffb3b3; background: #3a1420; }
   .lobby-layout, .station-layout { grid-template-columns: 1fr; }
   .roles { grid-template-columns: 1fr; }
   .station { min-height: 35vh; }
-  .room { min-height: 5.5rem; padding: .4rem; }
   .debrief-columns { grid-template-columns: 1fr; }
 }
